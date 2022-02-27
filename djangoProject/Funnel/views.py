@@ -1,9 +1,3 @@
-#testing ak asd asd sdf asdf
-# #a
-# as
-# d
-# ds
-# asd
 from django.shortcuts import render
 from .models import *
 from rest_framework.views import APIView
@@ -14,7 +8,7 @@ from datetime import datetime
 
 # Create your views here.
 """Filter which used as Dummy"""
-#testing git merge
+
 
 # input_filter = [{'event': "cart",
 #                  'filters': {
