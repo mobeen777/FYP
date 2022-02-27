@@ -2,28 +2,29 @@ from django.shortcuts import render
 from .models import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import permissions
 from django.db.models import Count
 from datetime import datetime
 
 # Create your views here.
 """Filter which used as Dummy"""
 
-input_filter = [{'event': "cart",
-                 'filters': {
-                     'os_type': "Android 7.1.2",
-                 }
-                 }, {'event': "register",
-                     'filters': {
-                         'os_type': "Android 4.4",
-
-                     }
-                     },
-                {'event': "payment_info",
-                 'filters': {
-                     'theme_color': "Red",
-                 }
-                 }
-                ]
+# input_filter = [{'event': "cart",
+#                  'filters': {
+#                      'os_type': "Android 7.1.2",
+#                  }
+#                  }, {'event': "register",
+#                      'filters': {
+#                          'os_type': "Android 4.4",
+#
+#                      }
+#                      },
+#                 {'event': "payment_info",
+#                  'filters': {
+#                      'theme_color': "Red",
+#                  }
+#                  }
+#                 ]
 
 
 class GetAllEvents(APIView):
@@ -48,7 +49,7 @@ class GetAllEventsCount(APIView):
             'All_Events': data
         }
         return Response(data=data)
-
+#testing
 
 class GetPercentageDrop(APIView):
     """Sending Drop off"""
@@ -103,8 +104,11 @@ class GetEventsAndFilters(APIView):
 class GetCountAfterFilter(APIView):
     """Sending Event Counts of Relative Event After Applying the Filters"""
 
-    def get(self, request, *args, **kwargs):
-        filtered_events = filter_for_all_events(input_filter)  # Filter define above later it will come from frontend
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        input = self.request.data
+        filtered_events = filter_for_all_events(input)  # Filter define above later it will come from frontend
         data = {
             'Filtered_Events_Count': filtered_events,
         }
@@ -114,14 +118,17 @@ class GetCountAfterFilter(APIView):
 class GetAllResults(APIView):
     """Sending all analytics"""
 
-    def get(self, request, *args, **kwargs):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        input = self.request.data
         events = get_all_events()
         count = event_count(events)  # Passing funnel which we will get from frontend later
         drop = per_drop(count)
         total_drop = total_per_drop(count)
         time_avg = all_time(events)
         event_filter = all_events_filters(events)
-        filtered_events = filter_for_all_events(input_filter)  # Filter define above later it will come from frontend
+        filtered_events = filter_for_all_events(input)  # Filter define above later it will come from frontend
         data = {
             'All_Events': events,
             "Count": count,
