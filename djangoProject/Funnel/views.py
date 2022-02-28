@@ -30,8 +30,9 @@ from datetime import datetime
 
 class GetAllEvents(APIView):
     """Send all Events in our Database"""
+    permission_classes = (permissions.AllowAny,)
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         print(self.request.data)
         data = get_all_events()
         data = {
@@ -41,11 +42,14 @@ class GetAllEvents(APIView):
 
 
 class GetAllEventsCount(APIView):
-    """Sending count of all events of funnel"""
+    """Sending count of all events"""
 
-    def get(self, request, *args, **kwargs):
-        events = get_all_events()
-        data = event_count(events)  # Passing funnel which we will get from frontend later
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        input_events = self.request.data[0]
+        # events = get_all_events()
+        data = event_count(input_events)  # Passing funnel which we get from frontend
         data = {
             'All_Events': data
         }
@@ -55,9 +59,11 @@ class GetAllEventsCount(APIView):
 class GetPercentageDrop(APIView):
     """Sending Drop off"""
 
-    def get(self, request, *args, **kwargs):
-        events = get_all_events()
-        count = event_count(events)  # Passing funnel which we will get from frontend later
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        input_events = self.request.data[0]
+        count = event_count(input_events)  # Passing funnel which we get from frontend
         drop = per_drop(count)
         data = {
             'Drop_Percentage': drop,
@@ -68,9 +74,11 @@ class GetPercentageDrop(APIView):
 class GetPercentageDropTotal(APIView):
     """Sending Drop off from total"""
 
-    def get(self, request, *args, **kwargs):
-        events = get_all_events()
-        count = event_count(events)  # Passing funnel which we will get from frontend later
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        input_events = self.request.data[0]
+        count = event_count(input_events)  # Passing funnel which we get from frontend
         total_drop = total_per_drop(count)
         data = {
             'Total_Drop': total_drop
@@ -81,9 +89,11 @@ class GetPercentageDropTotal(APIView):
 class GetAverageTime(APIView):
     """Sending Average Time Taken"""
 
-    def get(self, request, *args, **kwargs):
-        events = get_all_events()
-        time_avg = all_time(events)  # Passing funnel which we will get from frontend later
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        input_events = self.request.data[0]
+        time_avg = all_time(input_events)  # Passing funnel which we get from frontend
         data = {
             'Average_Time': time_avg,
         }
@@ -93,9 +103,11 @@ class GetAverageTime(APIView):
 class GetEventsAndFilters(APIView):
     """Sending All Events and Filters(Properties)"""
 
-    def get(self, request, *args, **kwargs):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
         events = get_all_events()
-        event_filter = all_events_filters(events)  # Passing funnel which we will get from frontend later
+        event_filter = all_events_filters(events)
         data = {
             'Event_Filter': event_filter,
         }
@@ -108,8 +120,8 @@ class GetCountAfterFilter(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        input = self.request.data
-        filtered_events = filter_for_all_events(input)  # Filter define above later it will come from frontend
+        input_filter = self.request.data[0]
+        filtered_events = filter_for_all_events(input_filter)  # Filter define above later it will come from frontend
         data = {
             'Filtered_Events_Count': filtered_events,
         }
@@ -122,14 +134,15 @@ class GetAllResults(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        input = self.request.data
+        input_filter = self.request.data[0]
+        input_events = self.request.data[1]
         events = get_all_events()
-        count = event_count(events)  # Passing funnel which we will get from frontend later
+        count = event_count(input_events)  # Passing funnel which we get from frontend
         drop = per_drop(count)
         total_drop = total_per_drop(count)
-        time_avg = all_time(events)
+        time_avg = all_time(input_events)
+        filtered_events = filter_for_all_events(input_filter)  # Filter define above later it will come from frontend
         event_filter = all_events_filters(events)
-        filtered_events = filter_for_all_events(input)  # Filter define above later it will come from frontend
         data = {
             'All_Events': events,
             "Count": count,
