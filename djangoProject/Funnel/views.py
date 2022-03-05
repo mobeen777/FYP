@@ -33,7 +33,6 @@ class GetAllEvents(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        print(self.request.data)
         data = get_all_events()
         data = {
             'All_Events': data
