@@ -42,7 +42,7 @@ def getting_event_time_session():
     return all_events, unique_ids_list
 
 
-def flow(event, events, sessions):
+def flow_of_events(event, events, sessions):
     """Getting list of previous events"""
 
     layer = []
@@ -88,5 +88,5 @@ def calc_no_of_events(layer):
         for j in event_count:
             if i['event'] == j[0]:
                 per_count.append((j[0], (j[1]/i["count"])*100))
-    print(per_count)
+    return per_count
 
