@@ -11,12 +11,13 @@ from datetime import datetime
 class GetSession(APIView):
 
     def get(self, request, *args, **kwargs):
-        previous_events = previous_layer("search")
-        # data = {
-        #     "Target_Event": "search",
-        #     "previous_layers": previous_events,
-        # }
-        data = my_code(3, previous_events)
+        data = [{"layer_no": 0,
+                 "Event": "search"}]
+        for i in range(1, 3):
+            print(i)
+            data.append({"layer_no ": i,
+                         "Events": all_layers(i, "search")})
+
         return Response(data=data)
 
 
@@ -91,7 +92,7 @@ def calc_no_of_events(layer):
 
 
 def previous_layer(target_event):
-    """Getting all layers of events"""
+    """Getting previous layer of event"""
 
     session_id = getting_event_time_session()
     list_of_previous_event = flow_of_events(target_event, session_id[0], session_id[1])
@@ -99,3 +100,18 @@ def previous_layer(target_event):
 
     return previous_events
 
+
+def all_layers(total_layer, event):
+    """Getting all previous layers of events"""
+
+    all_events = []
+    previous = previous_layer(event)
+
+    if total_layer == 1:
+        return previous
+    else:
+        for i in previous:
+            previous_list = all_layers(total_layer - 1, i[0])
+            all_events.append({"Event": i[0],
+                               "Previous_Events": previous_list})
+    return all_events
