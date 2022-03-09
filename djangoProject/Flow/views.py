@@ -11,13 +11,13 @@ from datetime import datetime
 class GetSession(APIView):
 
     def get(self, request, *args, **kwargs):
-        session_id = getting_event_time_session()
+        data = [{"layer_no": 0,
+                 "Event": "search"}]
+        for i in range(1, 3):
+            print(i)
+            data.append({"layer_no ": i,
+                         "Events": all_layers(i, "search")})
 
-        name = flow("search", session_id[0], session_id[1])
-        calc_no_of_events(name)
-        data = {
-            "data": session_id
-        }
         return Response(data=data)
 
 
@@ -59,9 +59,9 @@ def flow_of_events(event, events, sessions):
                 if (k[1] < j[1]) and (k[1] > time_value):
                     time_value = k[1]
                     goal_event = k[0]
-
-            previous_event.append(goal_event)
-            layer.append(previous_event)
+            if goal_event != event:
+                previous_event.append(goal_event)
+                layer.append(previous_event)
 
     return layer
 
@@ -79,7 +79,7 @@ def calc_no_of_events(layer):
         count = 0
         for j in layer:
             if i == j:
-                count +=1
+                count += 1
         event_count.append((i[0], count))
 
     count_db = Funnel.objects.values('event').annotate(count=Count('event'))
@@ -87,6 +87,31 @@ def calc_no_of_events(layer):
     for i in count_db:
         for j in event_count:
             if i['event'] == j[0]:
-                per_count.append((j[0], (j[1]/i["count"])*100))
+                per_count.append((j[0], (j[1] / i["count"]) * 100))
     return per_count
 
+
+def previous_layer(target_event):
+    """Getting previous layer of event"""
+
+    session_id = getting_event_time_session()
+    list_of_previous_event = flow_of_events(target_event, session_id[0], session_id[1])
+    previous_events = calc_no_of_events(list_of_previous_event)
+
+    return previous_events
+
+
+def all_layers(total_layer, event):
+    """Getting all previous layers of events"""
+
+    all_events = []
+    previous = previous_layer(event)
+
+    if total_layer == 1:
+        return previous
+    else:
+        for i in previous:
+            previous_list = all_layers(total_layer - 1, i[0])
+            all_events.append({"Event": i[0],
+                               "Previous_Events": previous_list})
+    return all_events
