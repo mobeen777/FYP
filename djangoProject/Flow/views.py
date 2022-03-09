@@ -13,7 +13,7 @@ class GetSession(APIView):
     def get(self, request, *args, **kwargs):
         data = [{"layer_no": 0,
                  "Event": "search"}]
-        for i in range(1, 3):
+        for i in range(1, 4):
             print(i)
             data.append({"layer_no ": i,
                          "Events": all_layers(i, "search")})
@@ -113,5 +113,6 @@ def all_layers(total_layer, event):
         for i in previous:
             previous_list = all_layers(total_layer - 1, i[0])
             all_events.append({"Event": i[0],
+                               "Percentage": i[1],
                                "Previous_Events": previous_list})
     return all_events
