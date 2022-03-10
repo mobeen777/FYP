@@ -304,3 +304,27 @@ def filter_for_all_events(filters):
         obj = filter_for_event(filters[i])
         all_filtered_events.append(obj)
     return all_filtered_events
+
+
+#
+# [[
+# {
+#     "event": "cart",
+#                  "filters": {
+#                      "os_type": "Android 7.1.2"
+#                  }
+#                  },
+#                  {"event": "register",
+#                      "filters": {
+#                          "os_type": "Android 4.4"
+#
+#                      }
+#                      },
+#                 {"event": "payment_info",
+#                  "filters": {
+#                      "theme_color": "Red"
+#                  }
+# }
+# ],["cart","payment_info","payment_successful","signup",
+#         "search",
+#         "filter"]]
