@@ -26,11 +26,16 @@ class GetFlowLayers(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        no_of_layers = self.request.data[0]
-        event = self.request.data[1]
+
+        data = self.request.data["data"]
+        print(data)
+        no_of_layers = data["layers"]
+        event = data["event"]
+
         data_previous = previous_data(no_of_layers, event)
         data_next = next_data(no_of_layers, event)
-        data = [data_previous, data_next]
+        data = {"Previous Layers": data_previous[no_of_layers],
+                "Next Layers": data_next[no_of_layers]}
 
         return Response(data=data)
 
@@ -146,11 +151,10 @@ def all_previous_layers(total_layer, event):
 def previous_data(total, event):
     """Data which we will send"""
     data = [{"Layers": "Previous",
-             "layer_no": 0,
              "Event": event}]
     for i in range(1, total + 1):
-        data.append({"layer_no ": i,
-                     "Events": all_previous_layers(i, event)})
+        data.append({
+            "Events": all_previous_layers(i, event)})
     return data
 
 
@@ -218,9 +222,8 @@ def next_data(total, event):
     """Data which we will send"""
 
     data = [{"Layers": "Next",
-             "layer_no": 0,
              "Event": event}]
     for i in range(1, total + 1):
-        data.append({"layer_no ": i,
-                     "Events": all_next_layers(i, event)})
+        data.append({
+            "Events": all_next_layers(i, event)})
     return data
