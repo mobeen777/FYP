@@ -10,19 +10,19 @@ from datetime import datetime
 """Filter which used as Dummy"""
 
 
-# input_filter = [{'event': "cart",
-#                  'filters': {
-#                      'os_type': "Android 7.1.2",
+# input_filter = ["event": "cart",
+#                  "filters": {
+#                      "os_type": "Android 7.1.2",
 #                  }
-#                  }, {'event': "register",
-#                      'filters': {
-#                          'os_type': "Android 4.4",
+#                  }, {"event": "register",
+#                      "filters": {
+#                          "os_type": "Android 4.4",
 #
 #                      }
 #                      },
 #                 {'event': "payment_info",
-#                  'filters': {
-#                      'theme_color': "Red",
+#                  "filters": {
+#                      "theme_color": "Red",
 #                  }
 #                  }
 #                 ]
@@ -48,7 +48,7 @@ class GetAllEventsCount(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        input_events = self.request.data[0]
+        input_events = self.request.data["data"]
         # events = get_all_events()
         data = event_count(input_events)  # Passing funnel which we get from frontend
         data = {
@@ -63,7 +63,7 @@ class GetPercentageDrop(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        input_events = self.request.data[0]
+        input_events = self.request.data["data"]
         count = event_count(input_events)  # Passing funnel which we get from frontend
         drop = per_drop(count)
         data = {
@@ -78,7 +78,7 @@ class GetPercentageDropTotal(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        input_events = self.request.data[0]
+        input_events = self.request.data["data"]
         count = event_count(input_events)  # Passing funnel which we get from frontend
         total_drop = total_per_drop(count)
         data = {
@@ -93,7 +93,7 @@ class GetAverageTime(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        input_events = self.request.data[0]
+        input_events = self.request.data["data"]
         time_avg = all_time(input_events)  # Passing funnel which we get from frontend
         data = {
             'Average_Time': time_avg,
@@ -121,7 +121,7 @@ class GetCountAfterFilter(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-        input_filter = self.request.data[0]
+        input_filter = self.request.data["data"]
         filtered_events = filter_for_all_events(input_filter)  # Filter define above later it will come from frontend
         data = {
             'Filtered_Events_Count': filtered_events,
