@@ -216,6 +216,7 @@ def all_next_layers(total_layer, event):
 
 def next_data(total, event):
     """Data which we will send"""
+
     data = [{"Layers": "Next",
              "layer_no": 0,
              "Event": event}]
