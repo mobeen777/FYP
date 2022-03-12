@@ -48,11 +48,16 @@ class GetAllEventsCount(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
+
         input_events = self.request.data["data"]
-        # events = get_all_events()
         data = event_count(input_events)  # Passing funnel which we get from frontend
+        all_events = []
+        for i in input_events:
+            for j in data:
+                if i == j["event"]:
+                    all_events.append(j)
         data = {
-            'All_Events': data
+            'All_Events': all_events
         }
         return Response(data=data)
 
