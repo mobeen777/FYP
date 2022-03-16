@@ -70,10 +70,17 @@ class GetPercentageDrop(APIView):
     def post(self, request, *args, **kwargs):
         input_events = self.request.data["data"]
         count = event_count(input_events)  # Passing funnel which we get from frontend
-        drop = per_drop(count)
+        all_events = []
+        for i in input_events:
+            for j in count:
+                if i == j["event"]:
+                    all_events.append(j)
+        drop = per_drop(all_events)
+
         data = {
             'Drop_Percentage': drop,
         }
+
         return Response(data=data)
 
 
@@ -85,7 +92,13 @@ class GetPercentageDropTotal(APIView):
     def post(self, request, *args, **kwargs):
         input_events = self.request.data["data"]
         count = event_count(input_events)  # Passing funnel which we get from frontend
-        total_drop = total_per_drop(count)
+        all_events = []
+        for i in input_events:
+            for j in count:
+                if i == j["event"]:
+                    all_events.append(j)
+
+        total_drop = total_per_drop(all_events)
         data = {
             'Total_Drop': total_drop
         }
@@ -191,6 +204,7 @@ def per_drop(count):
     for i in range(len(count)):
         if i == len(count) - 1:
             break
+        print(count[i], count[i + 1])
         drop_percentage[f"{count[i]['event']}-{count[i + 1]['event']}"] = ((count[i]['count'] - count[i + 1]['count']) /
                                                                            count[i]['count']) * 100
 
@@ -311,26 +325,3 @@ def filter_for_all_events(filters):
         obj = filter_for_event(filters[i])
         all_filtered_events.append(obj)
     return all_filtered_events
-
-#
-# [[
-# {
-#     "event": "cart",
-#                  "filters": {
-#                      "os_type": "Android 7.1.2"
-#                  }
-#                  },
-#                  {"event": "register",
-#                      "filters": {
-#                          "os_type": "Android 4.4"
-#
-#                      }
-#                      },
-#                 {"event": "payment_info",
-#                  "filters": {
-#                      "theme_color": "Red"
-#                  }
-# }
-# ],["cart","payment_info","payment_successful","signup",
-#         "search",
-#         "filter"]]
