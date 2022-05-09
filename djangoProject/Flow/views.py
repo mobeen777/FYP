@@ -28,7 +28,6 @@ class GetFlowLayers(APIView):
     def post(self, request, *args, **kwargs):
 
         data = self.request.data["data"]
-        print(data)
         no_of_layers = data["layers"]
         event = data["event"]
 

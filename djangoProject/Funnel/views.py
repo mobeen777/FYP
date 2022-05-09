@@ -9,7 +9,7 @@ from datetime import datetime
 # Create your views here.
 """Filter which used as Dummy"""
 
-
+#
 # input_filter = ["event": "cart",
 #                  "filters": {
 #                      "os_type": "Android 7.1.2",
@@ -113,6 +113,7 @@ class GetAverageTime(APIView):
     def post(self, request, *args, **kwargs):
         input_events = self.request.data["data"]
         time_avg = all_time(input_events)  # Passing funnel which we get from frontend
+        print(time_avg)
         data = {
             'Average_Time': time_avg,
         }
@@ -200,13 +201,14 @@ def event_count(funnel):
 def per_drop(count):
     """Getting drop off  event in the funnel"""
 
-    drop_percentage = {}
+    drop_percentage = []
     for i in range(len(count)):
         if i == len(count) - 1:
             break
         print(count[i], count[i + 1])
-        drop_percentage[f"{count[i]['event']}-{count[i + 1]['event']}"] = ((count[i]['count'] - count[i + 1]['count']) /
-                                                                           count[i]['count']) * 100
+        drop_percentage.append({"Event": f"{count[i]['event']}-{count[i + 1]['event']}",
+                                "Drop": ((count[i]['count'] - count[i + 1]['count']) /
+                                         count[i]['count']) * 100})
 
     return drop_percentage
 
@@ -218,12 +220,14 @@ def total_per_drop(count):
     for i in count:
         total += i['count']
 
-    total_drop = {}
+    total_drop = []
     for i in range(len(count)):
         if i == len(count):
             break
-        total_drop[f"Total-{count[i]['event']}"] = ((total - count[i]['count']) /
-                                                    total) * 100
+        total_drop.append({"Event": f"Total-{count[i]['event']}",
+                           "Total-Drop": ((total - count[i]['count']) /
+                                          total) * 100}
+                          )
 
     return total_drop
 
@@ -243,6 +247,7 @@ def timestamp(event):
                 total_time += datetime_object.timestamp()
             count += 1
     time_avg = (total_time / count)
+    print(time_avg)
     return time_avg
 
 
@@ -258,11 +263,12 @@ def all_time(funnel):
         avg = (first_event - second_event) / 60
         all_avg.append(avg)
 
-    time_per_event = {}
+    time_per_event = []
     for i in range(len(funnel)):
         if i == len(funnel) - 1:
             break
-        time_per_event[f"{funnel[i]}-{funnel[i + 1]}"] = all_avg[i]
+        time_per_event.append({"Event": f"{funnel[i]}-{funnel[i + 1]}",
+                               "Time": all_avg[i]})
 
     return time_per_event
 
