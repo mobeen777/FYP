@@ -26,15 +26,14 @@ class GetFlowLayers(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, *args, **kwargs):
-
         data = self.request.data["data"]
         no_of_layers = data["layers"]
         event = data["event"]
 
-        data_previous = previous_data(no_of_layers, event)
-        data_next = next_data(no_of_layers, event)
-        data = {"Previous Layers": data_previous[no_of_layers],
-                "Next Layers": data_next[no_of_layers]}
+        data_previous = org_data(no_of_layers, event)
+        data_next = org_data1(no_of_layers, event)
+        data = {"Previous Layers": data_previous,
+                "Next Layers": data_next}
 
         return Response(data=data)
 
@@ -154,6 +153,7 @@ def previous_data(total, event):
     for i in range(1, total + 1):
         data.append({
             "Events": all_previous_layers(i, event)})
+
     return data
 
 
@@ -226,3 +226,108 @@ def next_data(total, event):
         data.append({
             "Events": all_next_layers(i, event)})
     return data
+
+
+def org_data(no_of_layers, event):
+    data_previous = previous_data(no_of_layers, event)
+
+    org = {"Previous Layers": data_previous[no_of_layers]}
+    np = []
+    if no_of_layers == 1:
+        org = org["Previous Layers"]
+        org = org["Events"]
+        first = []
+        for i in range(len(org)):
+            first.append([org[i][0], event, org[i][1]])
+        np.append({"First": first})
+    if no_of_layers == 2:
+        org = org["Previous Layers"]
+        org = org["Events"]
+        first = []
+        for i in range(len(org)):
+            first.append([org[i]["Event"], event, org[i]["Percentage"]])
+        np.append({"First": first})
+        second = []
+        for i in range(len(org)):
+            pre_event = org[i]["Event"]
+            for j in range(len(org[i]["Previous_Events"])):
+                second.append([org[i]["Previous_Events"][j][0], pre_event, org[i]["Previous_Events"][j][1]])
+        np.append({"Second": second})
+    if no_of_layers == 3:
+        print(2)
+        org = org["Previous Layers"]
+        org = org["Events"]
+        first = []
+        for i in range(len(org)):
+            first.append([org[i]["Event"], event, org[i]["Percentage"]])
+        np.append({"First": first})
+        second = []
+        for i in range(len(org)):
+            pre_event1 = org[i]["Event"]
+            for j in range(len(org[i]["Previous_Events"])):
+                second.append(
+                    [org[i]["Previous_Events"][j]["Event"], pre_event1, org[i]["Previous_Events"][j]["Percentage"]])
+        np.append({"Second": second})
+        third = []
+        for i in range(len(org)):
+            pre_event1 = org[i]["Event"]
+            for j in range(len(org[i]["Previous_Events"])):
+                pre_event2 = org[i]["Previous_Events"][j]["Event"]
+                for k in range(len(org[i]["Previous_Events"][j]["Previous_Events"])):
+                    third.append([org[i]["Previous_Events"][j]["Previous_Events"][k][0], pre_event2,
+                                  org[i]["Previous_Events"][j]["Previous_Events"][k][1]])
+
+        np.append({"Third": third})
+    return np
+
+
+def org_data1(no_of_layers, event):
+    data_next = next_data(no_of_layers, event)
+    org = {"Next Layers": data_next[no_of_layers]}
+    np = []
+    if no_of_layers == 1:
+        org = org["Next Layers"]
+        org = org["Events"]
+        first = []
+        for i in range(len(org)):
+            first.append([event, org[i][0], org[i][1]])
+        np.append({"First": first})
+    if no_of_layers == 2:
+        org = org["Next Layers"]
+        org = org["Events"]
+        first = []
+        for i in range(len(org)):
+            first.append([event, org[i]["Event"], org[i]["Percentage"]])
+        np.append({"First": first})
+        second = []
+        for i in range(len(org)):
+            pre_event = org[i]["Event"]
+            for j in range(len(org[i]["next_Events"])):
+                second.append([pre_event, org[i]["next_Events"][j][0], org[i]["next_Events"][j][1]])
+        np.append({"Second": second})
+    if no_of_layers == 3:
+        print(2)
+        org = org["Next Layers"]
+        org = org["Events"]
+        first = []
+        for i in range(len(org)):
+            first.append([event, org[i]["Event"], org[i]["Percentage"]])
+        np.append({"First": first})
+        second = []
+        for i in range(len(org)):
+            pre_event1 = org[i]["Event"]
+            for j in range(len(org[i]["next_Events"])):
+                second.append(
+                    [pre_event1, org[i]["next_Events"][j]["Event"], org[i]["next_Events"][j]["Percentage"]])
+        np.append({"Second": second})
+        third = []
+        for i in range(len(org)):
+            pre_event1 = org[i]["Event"]
+            for j in range(len(org[i]["next_Events"])):
+                pre_event2 = org[i]["next_Events"][j]["Event"]
+                for k in range(len(org[i]["next_Events"][j]["next_Events"])):
+                    third.append([pre_event2, org[i]["next_Events"][j]["next_Events"][k][0],
+                                  org[i]["next_Events"][j]["next_Events"][k][1]])
+
+        np.append({"Third": third})
+    return np
