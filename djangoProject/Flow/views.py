@@ -77,7 +77,8 @@ def previous_flow_of_events(event, events, sessions):
     for i in sessions:
         one_session = list(filter(lambda x: i in x, events))
         flow_event = list(filter(lambda x: event in x, one_session))
-
+        # print(one_session)
+        print(flow_event)
         for j in flow_event:
             time_value = 0
             goal_event = 0
