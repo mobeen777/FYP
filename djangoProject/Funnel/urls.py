@@ -2,8 +2,8 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('all_events/', GetAllEvents.as_view(), name='all_events'),
-    path('event_count/', GetAllEventsCount.as_view(), name='event_count'),
+    path('all_events/', GetAllEvents.as_view(), name='all_event'),
+    path('event_count/', GetAllEventsCount.as_view(), name='event_counts'),
     path('drop/', GetPercentageDrop.as_view(), name='drop'),
     path('total_drop/', GetPercentageDropTotal.as_view(), name='total_drop'),
     path('time/', GetAverageTime.as_view(), name='time'),
